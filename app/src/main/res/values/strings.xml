@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Calculator</string>
+    <string name="simple_calc_name">Simple</string>
+    <string name="advanced_calc_name">Advanced</string>
+    <string name="exit">Exit</string>
+    <string name="back">"Back"</string>
+</resources>
