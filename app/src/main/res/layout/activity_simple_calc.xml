@@ -36,7 +36,7 @@
             <Button
                 android:id="@+id/button19"
                 style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="82dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="BackspaceClicked"
@@ -47,7 +47,8 @@
                 android:layout_width="132dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="C" />
+                android:onClick="ACClicked"
+                android:text="AC" />
 
             <Button
                 android:id="@+id/buttonNegative"
@@ -84,7 +85,8 @@
             android:id="@+id/buttondot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=","
+            android:onClick="dotClicked"
+            android:text="."
             android:textSize="18sp" />
 
         <Button

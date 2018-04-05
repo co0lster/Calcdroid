@@ -10,13 +10,14 @@ import java.text.DecimalFormat;
 public class SimpleCalcActivity extends AppCompatActivity {
 
     TextView text;
-    Double memory =0.0;
+    Double memory = 0.0;
     Double operationNumber;
     boolean isCTapped = false;
     boolean isInserting = true;
+    boolean isDotUsed = false;
 
     public enum OperationStatus {
-        OPERATION, CLEAR, EQUALS, ADDITIONING, DIVIDING, SUBSTRUCTING, MULTIPLYING
+        CLEAR, ADDITIONING, DIVIDING, SUBSTRUCTING, MULTIPLYING
     }
 
     OperationStatus status = OperationStatus.CLEAR;
@@ -43,8 +44,13 @@ public class SimpleCalcActivity extends AppCompatActivity {
         isCTapped = true;
     }
 
-    //SimpleOperations OnClick
+    public void ACClicked(View view){
+        text.setText("");
+        memory = 0.0;
+        status = OperationStatus.CLEAR;
+    }
 
+    //SimpleOperations OnClick
     public void Addition(View view)
     {
         if(status == OperationStatus.ADDITIONING) return; // causing that spamming with plus don't affect result
@@ -96,8 +102,10 @@ public class SimpleCalcActivity extends AppCompatActivity {
     }
 
     private void showResult() {
-        DecimalFormat df = new DecimalFormat("0.#");
-         text.setText(df.format(memory));
+        //DecimalFormat df = new DecimalFormat("0.#");
+
+        String s = memory.longValue() == memory ? "" + memory.longValue() : "" + memory;
+        text.setText(s);
     }
 
     // Number buttons onClick methods
@@ -192,6 +200,20 @@ public class SimpleCalcActivity extends AppCompatActivity {
             isInserting = true;
         }
         text.append("0");
+    }
+
+    public void dotClicked(View view){
+        if (!isDotUsed)
+        {
+            if(!isInserting)
+            {
+                text.setText("");
+                isInserting = true;
+            }
+            text.append(".");
+            isDotUsed = true;
+        }
+
     }
 
 
