@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class SimpleCalcActivity extends AppCompatActivity {
 
     TextView text;
@@ -24,7 +26,7 @@ public class SimpleCalcActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_simple_calc);
-         text = (TextView)findViewById(R.id.screen);
+         text = findViewById(R.id.screen);
     }
 
     // C/CE
@@ -89,9 +91,13 @@ public class SimpleCalcActivity extends AppCompatActivity {
             case MULTIPLYING:  memory *= operationNumber; break;
             case CLEAR: memory = operationNumber; break;
         }
-        text.setText(memory.toString());
+        showResult();
 
+    }
 
+    private void showResult() {
+        DecimalFormat df = new DecimalFormat("0.#");
+         text.setText(df.format(memory));
     }
 
     // Number buttons onClick methods
