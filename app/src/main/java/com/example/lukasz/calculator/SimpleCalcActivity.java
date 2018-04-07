@@ -5,22 +5,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 public class SimpleCalcActivity extends AppCompatActivity {
 
     TextView text;
-    Double memory = 0.0;
-    Double operationNumber;
+    BigDecimal memory = new BigDecimal(0.0).setScale(2, BigDecimal.ROUND_HALF_UP);
+    BigDecimal operationNumber = new BigDecimal(0.0).setScale(2, BigDecimal.ROUND_HALF_UP);
     boolean isCTapped = false;
     boolean isInserting = true;
     boolean isDotUsed = false;
 
-    public enum OperationStatus {
+    public enum operationStatus {
         CLEAR, ADDITIONING, DIVIDING, SUBSTRUCTING, MULTIPLYING
     }
 
-    OperationStatus status = OperationStatus.CLEAR;
+    operationStatus status = operationStatus.CLEAR;
 
 
     @Override
@@ -31,80 +33,132 @@ public class SimpleCalcActivity extends AppCompatActivity {
     }
 
     // C/CE
-    public void BackspaceClicked(View view) {
+    public void backspaceClicked(View view) {
 
         text.setText("");
         if (isCTapped)
         {
-            memory = 0.0;
-            status = OperationStatus.CLEAR;
+            memory = BigDecimal.valueOf(0.0);
+            status = operationStatus.CLEAR;
             isCTapped = false;
             return;
         }
         isCTapped = true;
+        isDotUsed = false;
     }
 
     public void ACClicked(View view){
         text.setText("");
-        memory = 0.0;
-        status = OperationStatus.CLEAR;
+        memory = BigDecimal.valueOf(0);
+        status = operationStatus.CLEAR;
+        isDotUsed = false;
+
     }
 
     //SimpleOperations OnClick
-    public void Addition(View view)
+    public void addition(View view)
     {
-        if(status == OperationStatus.ADDITIONING) return; // causing that spamming with plus don't affect result
-        memory += Double.parseDouble(text.getText().toString());
-        status = OperationStatus.ADDITIONING;
-        isInserting = false;
+        if(status == operationStatus.ADDITIONING) return; // causing that spamming with plus don't affect result
+        status = operationStatus.ADDITIONING;
+        operatorClicked();
     }
 
-    public void Substructing(View view)
+    public void substructing(View view)
     {
-        if(status == OperationStatus.SUBSTRUCTING) return; // causing that spamming with plus don't affect result
-        memory += Double.parseDouble(text.getText().toString());
-        status = OperationStatus.SUBSTRUCTING;
-        isInserting = false;
+        if(status == operationStatus.SUBSTRUCTING) return; // causing that spamming with minus don't affect result
+        status = operationStatus.SUBSTRUCTING;
+        operatorClicked();
     }
 
- public void Dividing(View view)
+ public void dividing(View view)
     {
-        if(status == OperationStatus.DIVIDING) return; // causing that spamming with plus don't affect result
-        memory += Double.parseDouble(text.getText().toString());
-        status = OperationStatus.DIVIDING;
-        isInserting = false;
+        if(status == operationStatus.DIVIDING) return; // causing that spamming with slash don't affect result
+        status = operationStatus.DIVIDING;
+        operatorClicked();
     }
 
- public void Multiplying(View view)
+ public void multiplying(View view)
     {
-        if(status == OperationStatus.MULTIPLYING) return; // causing that spamming with plus don't affect result
-        memory += Double.parseDouble(text.getText().toString());
-        status = OperationStatus.MULTIPLYING;
-        isInserting = false;
+        if(status == operationStatus.MULTIPLYING) return; // causing that spamming with star don't affect result
+        status = operationStatus.MULTIPLYING;
+        operatorClicked();
+
+    }
+
+    private void operatorClicked()
+    {
+        try {
+            computeMemoryValue();
+            isInserting = false;
+            isDotUsed = false;
+        }
+        catch (NumberFormatException e)
+        {
+            text.setText("Wrong number");
+            isInserting = false;
+        }
+    }
+
+    private void computeMemoryValue() {
+        try {
+           memory = BigDecimal.valueOf(Double.parseDouble(text.getText().toString()));
+
+        }
+        catch (NullPointerException e)
+        {
+            memory = BigDecimal.valueOf(0);
+        }
     }
 
     public void EqualsButton (View view){
-
-        if(isInserting)
+        try {
+            if (isInserting) {
+                computeOperationValue();
+            }
+            isInserting = false;
+            isDotUsed = false;
+            switch (status) {
+                case ADDITIONING:
+                    memory = memory.add(operationNumber);
+                    break;
+                case SUBSTRUCTING:
+                    memory = memory.subtract(operationNumber);
+                    break;
+                case DIVIDING:
+                    memory =  new BigDecimal(memory.doubleValue(),MathContext.DECIMAL32).divide(operationNumber,8, RoundingMode.HALF_UP);
+                    break;
+                case MULTIPLYING:
+                    memory = memory.multiply(operationNumber);
+                    break;
+                case CLEAR:
+                    memory = operationNumber;
+                    break;
+            }
+            showResult();
+        }
+        catch (NumberFormatException e)
         {
-            operationNumber = Double.parseDouble(text.getText().toString());
-        }
-        isInserting = false;
-        switch (status){
-            case ADDITIONING:  memory += operationNumber; break;
-            case SUBSTRUCTING: memory -= operationNumber; break;
-            case DIVIDING:     memory /= operationNumber; break;
-            case MULTIPLYING:  memory *= operationNumber; break;
-            case CLEAR: memory = operationNumber; break;
-        }
-        showResult();
 
+            text.setText("Wrong number");
+            isInserting = false;
+        }
+
+    }
+
+    private void computeOperationValue() {
+        try {
+            operationNumber = BigDecimal.valueOf(Double.parseDouble(text.getText().toString()));
+        }
+        catch (NullPointerException e)
+        {
+            operationNumber = BigDecimal.valueOf(0.0);
+        }
     }
 
     private void showResult() {
         //DecimalFormat df = new DecimalFormat("0.#");
 
-        String s = memory.longValue() == memory ? "" + memory.longValue() : "" + memory;
+        String s = memory.doubleValue() == memory.longValue() ? "" + memory.longValue() : "" + memory;
         text.setText(s);
     }
 
