@@ -94,6 +94,7 @@ public class SimpleCalcActivity extends AppCompatActivity {
         }
         catch (NumberFormatException e)
         {
+            //findViewById(R.id.screenRipple).animate();
             text.setText("Wrong number");
             isInserting = false;
         }
