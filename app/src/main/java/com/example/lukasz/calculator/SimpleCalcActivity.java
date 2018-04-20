@@ -55,6 +55,20 @@ public class SimpleCalcActivity extends AppCompatActivity {
 
     }
 
+    public void negationOfNumber(View view){
+
+        if(getValueFromView().compareTo(BigDecimal.ZERO) >= 1)
+        {
+           String negation = "-" + text.getText();
+           text.setText(negation);
+        }
+        else
+        {
+            text.setText(text.getText().subSequence(1,text.length()));
+        }
+
+    }
+
     //SimpleOperations OnClick
     public void addition(View view)
     {
@@ -88,32 +102,34 @@ public class SimpleCalcActivity extends AppCompatActivity {
     private void operatorClicked()
     {
         try {
-            computeMemoryValue();
-            isInserting = false;
+            memory = getValueFromView();
             isDotUsed = false;
         }
         catch (NumberFormatException e)
         {
             text.setText("Wrong number");
+        }
+        finally
+        {
             isInserting = false;
         }
     }
 
-    private void computeMemoryValue() {
-        try {
-           memory = BigDecimal.valueOf(Double.parseDouble(text.getText().toString()));
-
+    private BigDecimal getValueFromView() {
+        try
+        {
+            return BigDecimal.valueOf(Double.parseDouble(text.getText().toString()));
         }
         catch (NullPointerException e)
         {
-            memory = BigDecimal.valueOf(0);
+           return BigDecimal.valueOf(0);
         }
     }
 
     public void EqualsButton (View view){
         try {
             if (isInserting) {
-                computeOperationValue();
+                operationNumber = getValueFromView();
             }
             isInserting = false;
             isDotUsed = false;
@@ -144,17 +160,6 @@ public class SimpleCalcActivity extends AppCompatActivity {
         }
 
     }
-
-    private void computeOperationValue() {
-        try {
-            operationNumber = BigDecimal.valueOf(Double.parseDouble(text.getText().toString()));
-        }
-        catch (NullPointerException e)
-        {
-            operationNumber = BigDecimal.valueOf(0.0);
-        }
-    }
-
     private void showResult() {
         //DecimalFormat df = new DecimalFormat("0.#");
 
@@ -165,105 +170,69 @@ public class SimpleCalcActivity extends AppCompatActivity {
     // Number buttons onClick methods
     public void NumberOneClicked(View view)
     {
+        clearView();
+        text.append("1");
+    }
+
+    private void clearView() {
         if(!isInserting)
         {
             text.setText("");
             isInserting = true;
         }
-        text.append("1");
     }
 
     public void NumberTwoClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("2");
     }
 
     public void NumberThreeClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("3");
     }
     public void NumberFourClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("4");
     }
     public void NumberFiveClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("5");
     }
     public void NumberSixClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("6");
     }
     public void NumberSevenClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("7");
     }
     public void NumberEightClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("8");
     }
     public void NumberNineClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("9");
     }
     public void NumberZeroClicked(View view)
     {
-        if(!isInserting)
-        {
-            text.setText("");
-            isInserting = true;
-        }
+        clearView();
         text.append("0");
     }
 
     public void dotClicked(View view){
         if (!isDotUsed)
         {
-            if(!isInserting)
-            {
-                text.setText("");
-                isInserting = true;
-            }
+            clearView();
             text.append(".");
             isDotUsed = true;
         }
