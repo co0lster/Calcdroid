@@ -72,47 +72,40 @@ public class SimpleCalcActivity extends AppCompatActivity {
     //SimpleOperations OnClick
     public void addition(View view)
     {
-        if(status == operationStatus.ADDITIONING) return; // causing that spamming with plus don't affect result
-        status = operationStatus.ADDITIONING;
-        operatorClicked();
+        OperationOnClick(operationStatus.ADDITIONING);
+
+    }
+
+    private void OperationOnClick(operationStatus operationStatus) {
+        if(status == operationStatus) {
+            if (isInserting){
+                computeResult();
+                status = operationStatus;
+                return;
+            }
+            else
+                {
+                return;// causing that spamming with plus don't affect result
+                }
+        }
+        computeResult(); // in case operation was different
+        status = operationStatus;
     }
 
     public void substructing(View view)
     {
-        if(status == operationStatus.SUBSTRUCTING) return; // causing that spamming with minus don't affect result
-        status = operationStatus.SUBSTRUCTING;
-        operatorClicked();
+        OperationOnClick(operationStatus.SUBSTRUCTING);
     }
 
  public void dividing(View view)
     {
-        if(status == operationStatus.DIVIDING) return; // causing that spamming with slash don't affect result
-        status = operationStatus.DIVIDING;
-        operatorClicked();
+        OperationOnClick(operationStatus.DIVIDING);
     }
 
  public void multiplying(View view)
     {
-        if(status == operationStatus.MULTIPLYING) return; // causing that spamming with star don't affect result
-        status = operationStatus.MULTIPLYING;
-        operatorClicked();
+        OperationOnClick(operationStatus.MULTIPLYING);
 
-    }
-
-    private void operatorClicked()
-    {
-        try {
-            memory = getValueFromView();
-            isDotUsed = false;
-        }
-        catch (NumberFormatException e)
-        {
-            text.setText("Wrong number");
-        }
-        finally
-        {
-            isInserting = false;
-        }
     }
 
     private BigDecimal getValueFromView() {
@@ -127,39 +120,49 @@ public class SimpleCalcActivity extends AppCompatActivity {
     }
 
     public void EqualsButton (View view){
+
+      computeResult();
+    }
+
+    private void computeResult() {
         try {
             if (isInserting) {
                 operationNumber = getValueFromView();
             }
-            isInserting = false;
             isDotUsed = false;
             switch (status) {
                 case ADDITIONING:
                     memory = memory.add(operationNumber);
+                    showResult();
                     break;
                 case SUBSTRUCTING:
                     memory = memory.subtract(operationNumber);
+                    showResult();
                     break;
                 case DIVIDING:
-                    memory =  new BigDecimal(memory.doubleValue(),MathContext.DECIMAL32).divide(operationNumber,8, RoundingMode.HALF_UP);
+                    memory =  new BigDecimal(memory.doubleValue(), MathContext.DECIMAL32).divide(operationNumber,8, RoundingMode.HALF_UP);
+                    showResult();
                     break;
                 case MULTIPLYING:
                     memory = memory.multiply(operationNumber);
+                    showResult();
                     break;
                 case CLEAR:
                     memory = operationNumber;
                     break;
             }
-            showResult();
+
         }
-        catch (NumberFormatException e)
+        catch (Exception e)
         {
 
             text.setText("Wrong number");
+        }
+        finally {
             isInserting = false;
         }
-
     }
+
     private void showResult() {
         //DecimalFormat df = new DecimalFormat("0.#");
 
